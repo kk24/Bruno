@@ -1,0 +1,12 @@
+# Secrets
+.env*
+
+# Bruno environments (secrets stored locally, not committed)
+environments/
+
+# Dependencies
+node_modules
+
+# OS files
+.DS_Store
+Thumbs.db
