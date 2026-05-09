@@ -1,0 +1,57 @@
+info:
+  name: Current-Weather
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseURL}}/data/2.5/weather?q={{cityName}}&appid={{apiKey}}"
+  params:
+    - name: q
+      value: "{{cityName}}"
+      type: query
+    - name: appid
+      value: "{{apiKey}}"
+      type: query
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        // define array & index variables
+        const cityArray = JSON.parse(bru.getCollectionVar('cityArray'));
+        let index = parseInt(bru.getCollectionVar('cityIndex'));
+
+        // set collecton variable [cityName]
+        bru.setVar("cityName",cityArray[index]);
+        console.log(`Setting the cityName = ${bru.getCollectionVar('cityName')}`);
+        console.log(index);
+
+        // increment or reset index 
+        if (index >= cityArray.length) {
+          index = 0;
+        } else {
+          index += 1;  
+        }
+        bru.setVar("cityIndex", index);
+    - type: tests
+      code: |-
+        // define expected data variables
+        const expCity = bru.getVar("cityName");
+        const expCode = 200;
+
+        // test - status code
+        test(`Status Code is ${expCode}`, () => expect(res.getStatus()).to.equal(expCode));
+
+        // test - JSON response (name)
+        test("Response name matches requested city", function() {
+          const data = res.getBody();
+          expect(data.name).to.equal(bru.getCollectionVar("cityName"));
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

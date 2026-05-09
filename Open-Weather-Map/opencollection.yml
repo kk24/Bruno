@@ -2,9 +2,46 @@ opencollection: 1.0.0
 
 info:
   name: Open-Weather-Map
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: apikey
+    key: apiKey
+    value: "{{apiKey}}"
+    placement: query
+  variables:
+    - name: baseURL
+      value: https://api.openweathermap.org
+    - name: cityName
+      value: Wellington
+    - name: cityArray
+      value: '["Wellington","Auckland","Christchurch"]'
+    - name: cityIndex
+      value: "0"
+  scripts:
+    - type: before-request
+      code: //
+
+docs:
+  content: Open-Weather-Map API Collection
+  type: text/markdown
 bundled: false
 extensions:
   bruno:
     ignore:
       - node_modules
       - .git
+    presets:
+      request:
+        type: http
